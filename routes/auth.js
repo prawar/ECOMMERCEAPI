@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const User = require('../models/User');
 const CryptoJS = require('crypto-js');
-const cryptoJs = require('crypto-js');
 const jwt = require('jsonwebtoken');
 
 //REGISTER
@@ -38,7 +37,7 @@ router.post('/login', async (req, res) => {
             user.password,
             process.env.PASS_SEC
         );
-        const originalPassword = hasedPassword.toString(cryptoJs.enc.Utf8);
+        const originalPassword = hasedPassword.toString(CryptoJS.enc.Utf8);
 
         if (originalPassword !== req.body.password) {
             res.status(401).json("wrong crendentials!");
@@ -49,14 +48,15 @@ router.post('/login', async (req, res) => {
             id: user._id,
             isAdmin: user.isAdmin
         },
-            process.env.JWT_SEC,
-            {expiresIn: "3d"}
+        process.env.JWT_SEC,
+        {expiresIn: "3d"}
         )
 
         const { password, ...others } = user._doc;
 
         res.status(200).json({...others,accessToken});
     } catch (err) {
+        console.log('here',err)
         res.status(500).json(err);
     }
 })
